@@ -1,0 +1,93 @@
+//  Following cli will list out all the aws instances with private Ip , tag name and instance Id .
+
+aws ec2 describe-instances --filters Name=vpc-id,Values=vpc-e48efc8d --query 'Reservations[].Instances[].[PrivateIpAddress,InstanceId,Tags[?Key==`Name`].Value[]]' --output text | sed 's/None$/None\n/' | sed '$!N;s/\n/ /' > /home/scripts/ec2-info
+# cat /home/scripts/ec2-info|gawk {'print ( $1"  " $3 $4 $5 $6)'} > /home/scripts/server_list.txt
+#sudo cat /home/scripts/server_list.txt
+sudo cat /home/scripts/server.txt |gawk {'print ($3)'} > server_ssh.txt
+cat server_ssh.txt
+
+//Run loop to ssh all the instances using there private Ip Address and running the commmand . Store the result in different file 
+
+while read  server; do
+ssh -i /home/scripts/LuneraDev.pem ubuntu@$server "hostname ; find /lunera/code -type l -ls | grep current|grep -o 'current.*'|cut -f2- -d-|expand --tabs=20;">> info.txt  < /dev/null
+done < "server_ssh.txt"
+echo "The version and the service $cat info.txt"
+cat info.txt
+//Parsing the file info.txt to create the table 
+// this line of code will create table for the file 
+awk 'BEGIN { 
+        x = 0;
+        print "<table border="1">"
+    }
+    {
+        if (NF == 1){
+            print "<tr ><td colspan="2">"$i"</td>";
+            print "</tr>"
+        } else {
+            if (x == 0){
+                x++;
+                print "<tr><td>"$i"</td>"
+            } else {
+                x = 0;
+                print "<td>"$i"</td></tr>"
+            }
+        }
+    }
+    END {
+        print "</table>"
+    }' input.txt > table.html
+    
+    
+                              ''' Second script which is more or less similar to above one '''
+    
+    aws ec2 describe-instances --filters Name=vpc-id,Values=vpc-ab5661c2 --query 'Reservations[].Instances[].[PrivateIpAddress,InstanceId,Tags[?Key==`Name`].Value[]]' --output text | sed '$!N;s/\n/ /' > /home/scripts/server_list.text
+sudo cat /home/scripts/server_list.txt |gawk {'print ($1)'} > server_ssh.txt
+cat server_ssh.txt
+for server in  `cat server_ssh.txt`
+do
+    #echo $server
+        #ssh -i /home/scripts/LuneraDev.pem ubuntu@$server ls -ld /lunera/code/*/current | awk -v x=$(hostname) '{print x "\t" $9 "\t" $11}' >> info.txt  < /dev/null
+################## BEGIN OF SCRIPT##############################
+        ssh -i /home/scripts/LuneraDev.pem ubuntu@$server 'ls -ld /lunera/code/*/current/version.txt | awk -v x=$(hostname) '"'"'{print x "\t\t" $9 "\t\t" $11}'"'"' ' >>info.txt
+done
+ubuntu@ip-172-16-2-234:~$ find /lunera/code/data-mapper/current/ -type f -exec md5sum {} \; | sort -k 2 | md5sum | awk '{ print $1 }'
+94cc628d57dbd8af50c2d20f1e3d2fb5
+ubuntu@ip-172-16-2-234:~$ find /lunera/code/data-mapper/current/ -type f -exec ls -l {} \; | awk '{ sum += $5 } END { print sum }'
+ssh -TAtt ubuntu@18.221.144.194 ssh -A /home/scripts/devops.pem -o ConnectTimeout=5 -o BatchMode=yes -o StrictHostKeyChecking=no ubuntu@$server 'ls -ld /lunera/code/*/current | awk -v x=$(hostname) '"'"'{print x "\t\t" $9 "\t\t" $11}'"'"' '
+//command to login to jump box
+ssh -TAtt ubuntu@${SSH_JUMP_ENG} ssh -A ubuntu@<server_ip>
+
+ssh -i /home/scripts/LuneraDev.pem -o ConnectTimeout=5 -o BatchMode=yes -o StrictHostKeyChecking=no ubuntu
+pr -m -t -f  Eng_version1.txt Eng_version.txt Prod_version.txt|column -t >> report.txt
+sed  -i '1i\            VERSION LIST COMPARISON \n SERVICE VERSION         ENG     PROD' report.txt
+sed  -i '3i\##########################' report.txt
+
+#awk 'BEGIN{print "<table>"} {print "<tr>";for(i=1;i<=NF;i++)print "<td>" $i"</td>";print "</tr>"} END{print "</table>"}' report.txt
+#column -t  table.html>table_report.html
+#column  report.txt>report_mail.txt
+txt2html report.txt>report.html
+python mailsend_html.py
+// Brilliant command to create table from a given file 
+awk 'BEGIN { print "<table border=1>" }; { printf( "<tr><td>%s</td><td>%s</td><td>%s</td></tr>\n", $1, $2, $3 ) } END { print  "</table>" }' rep.txt  > rep.html
+
+//To sort the file  
+sed '/^$/d' exam1.txt | awk '!a[$1]++'    
+// SCP to other machine and extract file from remote machine . This command is used when you need file to be copied on the server where you are currently working 
+
+scp -o-r -oIdentityFile=/home/scripts/LuneraDev.pem ubuntu@13.59.242.61:/home/scripts/FINAL/devops.pem /home/scripts    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
